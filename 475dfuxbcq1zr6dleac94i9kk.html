@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>hello</title>
+  <style>
+    body {
+      background-color: black;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    
+    canvas {
+      display: block;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
+  <script>
+    // Function to shuffle the letters of a string
+    function shuffleString(string) {
+      let shuffledString = '';
+      let stringArray = string.split('');
+      while (stringArray.length > 0) {
+        const randomIndex = Math.floor(Math.random() * stringArray.length);
+        shuffledString += stringArray[randomIndex];
+        stringArray.splice(randomIndex, 1);
+      }
+      return shuffledString;
+    }
+
+    // Function to animate the <title> tag
+    function animateTitle() {
+      const titleElement = document.getElementsByTagName('title')[0];
+      const originalTitle = 'hello';
+
+      // Recursive function to swap letters randomly
+      function swapLetters() {
+        const shuffledTitle = shuffleString(originalTitle);
+        titleElement.innerHTML = shuffledTitle;
+        setTimeout(swapLetters, 500); // Swap letters every 500 milliseconds
+      }
+
+      swapLetters();
+    }
+  </script>
+</head>
+<body onload="animateTitle()">
+  <script>
+    // Create the scene
+    const scene = new THREE.Scene();
+
+    // Create the camera
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 5;
+
+    // Create the renderer
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Create the cube
+    const geometry = new THREE.BoxGeometry();
+    const material = new THREE.MeshBasicMaterial({ color: 0xffffff, vertexColors: THREE.FaceColors });
+    const cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
+
+    // Set up cube colors
+    const colors = [
+      0xff0000, // Red
+      0x00ff00, // Green
+      0x0000ff, // Blue
+      0xffff00, // Yellow
+      0xff00ff, // Magenta
+      0x00ffff  // Cyan
+    ];
+
+    cube.geometry.faces.forEach((face) => {
+      face.color.setHex(colors[Math.floor(Math.random() * colors.length)]);
+    });
+
+    // Animation variables
+    let counter = 0;
+    const colorChangeInterval = 60; // Change color every 60 frames
+
+    // Animate the cube
+    function animate() {
+      requestAnimationFrame(animate);
+
+      cube.rotation.x += 0.01;
+      cube.rotation.y += 0.01;
+
+      counter++;
+      if (counter % colorChangeInterval === 0) {
+        cube.geometry.faces.forEach((face) => {
+          face.color.setHex(colors[Math.floor(Math.random() * colors.length)]);
+        });
+
+        cube.geometry.colorsNeedUpdate = true;
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
